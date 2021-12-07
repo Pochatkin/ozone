@@ -199,7 +199,7 @@ pipeline {
                 }
             }
         }
-        stage("Install") {
+        stage("Install ozone") {
             when {
                 allOf {
                     equals expected: false, actual: Variables.updateParams
@@ -208,7 +208,6 @@ pipeline {
             }
             steps {
                 script {
-                    def stackHome = "usr/${params.stackName}/${params.stackVersion}-${params.stackBuildId}"
                     def stackBuildRoot = "${Variables.buildRootDir}/usr/${params.stackName}/${params.stackVersion}-${params.stackBuildId}"
                     def stackRealRoot = "/usr/${params.stackName}/${params.stackVersion}-${params.stackBuildId}"
 
@@ -264,6 +263,20 @@ pipeline {
                         cp -r -a ${Variables.buildDir}/libexec/* ${stackBuildRoot}/ozone/libexec/
                         cp -r ${Variables.buildDir}/etc/hadoop/* ${stackBuildRoot}/ozone/etc/hadoop/conf.empty
                    """
+
+                    //Apache Ozone client
+                    Variables.buildDir = "./hadoop-ozone/client/target"
+                    stackBuildRoot = "${Variables.buildRootDir}/usr/${params.stackName}/${params.stackVersion}-${params.stackBuildId}"
+                    stackRealRoot = "/usr/${params.stackName}/${params.stackVersion}-${params.stackBuildId}"
+
+                    sh script: """
+                        mkdir -p "${Variables.buildRootDir}"
+                        mkdir -p "${stackBuildRoot}/ozone-client/lib"
+                    """
+
+                    sh script: """
+                        cp -a ${Variables.buildDir}/hadoop-ozone-client-${artifactVersion}.jar ${stackBuildRoot}/ozone-client/lib/
+                    """
 
                 }
             }
