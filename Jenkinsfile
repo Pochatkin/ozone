@@ -5,7 +5,7 @@ import ru.sber.Variables
 
 import javax.lang.model.element.VariableElement
 
-def artifactVersion = "1.1.0"
+def artifactVersion = "1.2.0"
 Variables.componentVersion = artifactVersion
 
 def componentName = "ozone"
