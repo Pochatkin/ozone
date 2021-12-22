@@ -56,7 +56,7 @@ Client for Apache Ozone
 
 %files ozone-client
 %defattr(-,root,root)
-%{spec_stack_home}/ozone-client/lib/hadoop-ozone-client-%{component_version}.%{stack_version}-%{build_id}.jar
+%{spec_stack_home}/ozone-client/lib/ozone-client-%{component_version}.%{stack_version}-%{build_id}.jar
 
 
 %clean
