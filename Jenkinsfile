@@ -275,7 +275,7 @@ pipeline {
                     """
 
                     sh script: """
-                        cp -a ${Variables.buildDir}/hadoop-ozone-client-${artifactVersion}.jar ${stackBuildRoot}/ozone-client/lib/
+                        cp -a ${Variables.buildDir}/ozone-client-${artifactVersion}.jar ${stackBuildRoot}/ozone-client/lib/
                     """
 
                 }
