@@ -111,6 +111,7 @@ pipeline {
 
                     def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
                     artifactVersion = "${Variables.componentVersion}.${params.stackVersion}-${params.stackBuildId}${snapshotVersion}"
+                    artifactVersionNoSnapshot = "${Variables.componentVersion}.${params.stackVersion}-${params.stackBuildId}"
                 }
             }
         }
@@ -275,7 +276,7 @@ pipeline {
                     """
 
                     sh script: """
-                        cp -a ${Variables.buildDir}/ozone-client-${artifactVersion}.jar ${stackBuildRoot}/ozone-client/lib/
+                        cp -a ${Variables.buildDir}/ozone-client-${artifactVersion}.jar ${stackBuildRoot}/ozone-client/lib/ozone-client-${artifactVersionNoSnapshot}.jar
                     """
 
                 }
