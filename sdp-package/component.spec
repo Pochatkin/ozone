@@ -29,15 +29,14 @@ AutoReq: no
 %description
 Ozone is a scalable, redundant, and distributed object store for Hadoop and Cloud-native environments.
 
-%package ozone
-Summary: Apache Ozone
+%package client
+Summary: Apache Ozone Client
 Group: System/Daemons
-Requires: %{name} = %{version}-%{release}
 
-%description ozone
-Ozone is a scalable, redundant, and distributed object store for Hadoop and Cloud-native environments.
+%description client
+Client for Apache Ozone
 
-%files ozone
+%files
 %defattr(-,root,root)
 %{spec_stack_home}/ozone/bin/*
 %{spec_stack_home}/ozone/sbin/*
@@ -46,15 +45,7 @@ Ozone is a scalable, redundant, and distributed object store for Hadoop and Clou
 %{spec_stack_home}/ozone/share/*
 %{spec_stack_home}/ozone/etc/*
 
-
-%package ozone-client
-Summary: Apache Ozone Client
-Group: System/Daemons
-
-%description ozone-client
-Client for Apache Ozone
-
-%files ozone-client
+%files client
 %defattr(-,root,root)
 %{spec_stack_home}/ozone-client/lib/ozone-client-%{component_version}.%{stack_version}-%{build_id}.jar
 
