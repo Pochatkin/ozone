@@ -2948,7 +2948,7 @@ public final class OzoneManager extends ServiceRuntimeInfoImpl
     ResolvedBucket bucket = resolveBucketLink(Pair.of(volumeName, bucketName));
 
     if (isAclEnabled) {
-      checkAcls(ResourceType.BUCKET, StoreType.OZONE, ACLType.LIST,
+      checkAcls(ResourceType.KEY, StoreType.OZONE, ACLType.LIST,
           bucket.realVolume(), bucket.realBucket(), keyPrefix);
     }
 
