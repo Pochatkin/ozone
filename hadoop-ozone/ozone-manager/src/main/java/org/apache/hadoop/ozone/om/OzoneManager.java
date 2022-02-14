@@ -434,7 +434,7 @@ public final class OzoneManager extends ServiceRuntimeInfoImpl
           ResultCodes.OM_NOT_INITIALIZED);
     }
     omMetaDir = OMStorage.getOmDbDir(configuration);
-    
+
     this.isSpnegoEnabled = conf.get(OZONE_OM_HTTP_AUTH_TYPE, "simple")
         .equals("kerberos");
     this.scmBlockSize = (long) conf.getStorageSize(OZONE_SCM_BLOCK_SIZE,
@@ -2736,7 +2736,7 @@ public final class OzoneManager extends ServiceRuntimeInfoImpl
     ResolvedBucket bucket = resolveBucketLink(Pair.of(volumeName, bucketName));
 
     if (isAclEnabled) {
-      checkAcls(ResourceType.BUCKET, StoreType.OZONE, ACLType.LIST,
+      checkAcls(ResourceType.KEY, StoreType.OZONE, ACLType.LIST,
           bucket.realVolume(), bucket.realBucket(), keyPrefix);
     }
 
