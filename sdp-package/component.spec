@@ -47,8 +47,8 @@ Client for Apache Ozone
 
 %files client
 %defattr(-,root,root)
-%{spec_stack_home}/ozone-client/lib/ozone-client-%{component_version}.%{stack_version}-%{build_id}.jar
-
+%dir %{spec_stack_home}/ozone
+%{spec_stack_home}/ozone/share/ozone/lib/ozone-filesystem-hadoop3-%{component_version}.jar
 
 %clean
 # in order to provide build rpms without the whole workspace clean and lost the previous mvn build stage
