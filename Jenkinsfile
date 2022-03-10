@@ -67,10 +67,7 @@ properties([
 pipeline {
     agent { node { label "sdp || sdp-ansible-runner" } }
     triggers {
-        GenericTrigger (
-            causeString: "Triggered by PR merge",
-            token: "${env.JOB_NAME.replace('/', '_').replace('%2F', '_')}"
-        )
+        pollSCM(env.BRANCH_NAME == 'sdp-develop' ? 'H/5 * * * *' : '')
     }
     options {
         ansiColor("xterm")
