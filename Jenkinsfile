@@ -11,8 +11,6 @@ Variables.componentVersion = artifactVersion
 def componentName = "ozone"
 Variables.componentName = componentName
 
-def dockerRegistry = "tkles-fauna0080.vm.esrt.cloud.sbrf.ru:5000"
-
 properties([
   parameters([
     choice(
@@ -103,7 +101,6 @@ pipeline {
                     sdpStagePrepare()
                     Variables.stackVersion = params.stackVersion
                     Variables.dockerArgs.add("--env HOME=/var/cache")
-                    Variables.dockerImages["ozone"] = "${dockerRegistry}/sdp/bundle-hadoop:v0.1.1"
                     Variables.buildDir = "./hadoop-ozone/dist/target/ozone-${Variables.componentVersion}"
 
                     def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
@@ -135,7 +132,7 @@ pipeline {
             steps {
                 configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                     script {
-                        docker.image(Variables.dockerImages["ozone"]).inside(Variables.dockerArgs.join(" ")) {
+                        docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
                             sh script: """
                                 mvn -B versions:set                              \
                                 -DprocessAllModules=true                         \
@@ -161,7 +158,7 @@ pipeline {
                     // https://sbt-jenkins.sigma.sbrf.ru/job/SDP/configfiles/index
                     configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                         script {
-                            docker.image(Variables.dockerImages["ozone"]).inside(Variables.dockerArgs.join(" ")) {
+                            docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
                                 sh script: """
                                     mvn clean install                                \
                                     -Duser.home=${Variables.dockerCacheMount}        \
@@ -186,7 +183,7 @@ pipeline {
             steps {
                 script {
                     configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
-                        docker.image(Variables.dockerImages["ozone"]).inside(Variables.dockerArgs.join(" ")) {
+                        docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
                             sh script: """
                                 mvn -B deploy -s ${MAVEN_SETTINGS}                  \
                                 -Duser.home=${Variables.dockerCacheMount}           \
