@@ -25,6 +25,7 @@ Group: Development/Libraries
 # to set AutoReq to no in order to minimize confusion. Not ideal, but seems to work.
 # I wish there was a way to disable just one auto dependency (libjvm.so)
 AutoReq: no
+Requires: ranger_%{spec_stack_version}-ozone-plugin
 
 %description
 Ozone is a scalable, redundant, and distributed object store for Hadoop and Cloud-native environments.
