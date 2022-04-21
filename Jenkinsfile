@@ -11,6 +11,9 @@ Variables.componentVersion = artifactVersion
 def componentName = "ozone"
 Variables.componentName = componentName
 
+def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
+def componentVersionSnapshot = "${Variables.componentVersion}${snapshotVersion}"
+
 properties([
   parameters([
     choice(
@@ -99,12 +102,11 @@ pipeline {
             steps {
                 script {
                     sdpStagePrepare()
+                    artifactVersion = "${Variables.componentVersion}.${params.stackVersion}-${params.stackBuildId}${snapshotVersion}"
                     Variables.stackVersion = params.stackVersion
                     Variables.dockerArgs.add("--env HOME=/var/cache")
-                    Variables.buildDir = "./hadoop-ozone/dist/target/ozone-${Variables.componentVersion}"
+                    Variables.buildDir = "./hadoop-ozone/dist/target/ozone-${artifactVersion}"
 
-                    def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
-                    artifactVersion = "${Variables.componentVersion}.${params.stackVersion}-${params.stackBuildId}${snapshotVersion}"
                     artifactVersionNoSnapshot = "${Variables.componentVersion}.${params.stackVersion}-${params.stackBuildId}"
                 }
             }
@@ -133,8 +135,6 @@ pipeline {
                 configFileProvider([configFile(fileId: 'maven-settings-sberosc', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                     script {
                         docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
-                            def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
-                            def componentVersionSnapshot = "${Variables.componentVersion}${snapshotVersion}"
                             sh script: """
                                 mvn -B versions:set                              \
                                 -DprocessAllModules=true                         \
