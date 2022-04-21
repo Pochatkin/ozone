@@ -130,7 +130,7 @@ pipeline {
                 }
             }
             steps {
-                configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                configFileProvider([configFile(fileId: 'maven-settings-sberosc', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                     script {
                         docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
                             def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
@@ -161,7 +161,7 @@ pipeline {
             steps {
                 script {
                     // https://sbt-jenkins.sigma.sbrf.ru/job/SDP/configfiles/index
-                    configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
+                    configFileProvider([configFile(fileId: 'maven-settings-sberosc', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                         script {
                             docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
                                 sh script: """
