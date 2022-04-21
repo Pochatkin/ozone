@@ -5,7 +5,7 @@ import ru.sber.Variables
 
 import javax.lang.model.element.VariableElement
 
-def artifactVersion = "1.2.0"
+def artifactVersion = "1.3.0"
 Variables.componentVersion = artifactVersion
 
 def componentName = "ozone"
@@ -133,12 +133,17 @@ pipeline {
                 configFileProvider([configFile(fileId: 'sdp-maven-settings', targetLocation: 'maven_settings.xml', variable: 'MAVEN_SETTINGS')]) {
                     script {
                         docker.image(Variables.dockerImages["${Variables.cpuArch}"]["ozone"]).inside(Variables.dockerArgs.join(" ")) {
+                            def snapshotVersion = params.isSnapshot ? "-SNAPSHOT" : ""
+                            def componentVersionSnapshot = "${Variables.componentVersion}${snapshotVersion}"
                             sh script: """
                                 mvn -B versions:set                              \
                                 -DprocessAllModules=true                         \
                                 -DnewVersion=${artifactVersion}                  \
                                 -s ${MAVEN_SETTINGS}                             \
                                 -Duser.home=${Variables.dockerCacheMount}
+                            """
+                            sh script: """
+                                find . -name pom.xml -type f | xargs sed -i "s/$componentVersionSnapshot/$artifactVersion/g"
                             """
                         }
                     }
