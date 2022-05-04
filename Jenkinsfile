@@ -168,7 +168,8 @@ pipeline {
                                     mvn clean install                                \
                                     -Duser.home=${Variables.dockerCacheMount}        \
                                     -s ${MAVEN_SETTINGS}                             \
-                                    -DskipTests=${Variables.skipTests}
+                                    -DskipTests=${Variables.skipTests}               \
+                                    -DskipDocs=true
                                 """
                             }
                         }
