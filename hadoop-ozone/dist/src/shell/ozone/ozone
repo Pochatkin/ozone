@@ -52,7 +52,6 @@ function ozone_usage
   ozone_add_subcommand "csi" daemon "run the standalone CSI daemon"
   ozone_add_subcommand "recon" daemon "run the Recon service"
   ozone_add_subcommand "sh" client "command line interface for object store operations"
-  ozone_add_subcommand "s3" client "command line interface for s3 related operations"
   ozone_add_subcommand "insight" client "tool to get runtime operation information"
   ozone_add_subcommand "version" client "print the version"
   ozone_add_subcommand "dtutil" client "operations related to delegation tokens"
@@ -166,10 +165,6 @@ function ozonecmd_case
       OZONE_CLASSNAME=org.apache.hadoop.ozone.shell.OzoneShell
       ozone_deprecate_envvar HDFS_OM_SH_OPTS OZONE_SH_OPTS
       OZONE_SH_OPTS="${OZONE_SH_OPTS} -Dhadoop.log.file=ozone-shell.log -Dlog4j.configuration=file:${ozone_shell_log4j}"
-      OZONE_RUN_ARTIFACT_NAME="ozone-tools"
-    ;;
-    s3)
-      OZONE_CLASSNAME=org.apache.hadoop.ozone.shell.s3.S3Shell
       OZONE_RUN_ARTIFACT_NAME="ozone-tools"
     ;;
     scm)
