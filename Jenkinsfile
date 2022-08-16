@@ -65,7 +65,7 @@ properties([
 
 
 pipeline {
-    agent { node { label "sdp || sdp-ansible-runner" } }
+    agent { node { label "linux" } }
     triggers {
         GenericTrigger (
             causeString: "Triggered by PR merge",
