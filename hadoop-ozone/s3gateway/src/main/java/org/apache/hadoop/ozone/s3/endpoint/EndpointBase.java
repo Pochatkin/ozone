@@ -50,6 +50,7 @@ import org.apache.hadoop.ozone.client.OzoneVolume;
 import org.apache.hadoop.ozone.client.protocol.ClientProtocol;
 import org.apache.hadoop.ozone.om.exceptions.OMException;
 import org.apache.hadoop.ozone.om.exceptions.OMException.ResultCodes;
+import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
 import org.apache.hadoop.ozone.om.protocol.S3Auth;
 import org.apache.hadoop.ozone.s3.exception.OS3Exception;
 import org.apache.hadoop.ozone.s3.exception.S3ErrorTable;
@@ -58,6 +59,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.hadoop.ozone.s3.metrics.S3GatewayMetrics;
 import org.apache.hadoop.ozone.s3.util.AuditUtils;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,6 +218,23 @@ public abstract class EndpointBase implements Auditor {
   protected Iterator<? extends OzoneBucket> listS3Buckets(String prefix)
       throws IOException, OS3Exception {
     return iterateBuckets(volume -> volume.listBuckets(prefix));
+  }
+
+  protected S3SecretValue generateS3Secret(String username) {
+//    context.get
+
+//    if (username == null || username.isEmpty()) {
+//      username = UserGroupInformation.getCurrentUser().getUserName();
+//
+//      newError()
+//    }
+//
+//    final S3SecretValue secret = client.getObjectStore().getS3Secret(username);
+//    return secret;
+
+    LOG.info("Username: " + username);
+    LOG.info("Request: " + context);
+    return new S3SecretValue("saltKerberosID", "saltAwsSecret");
   }
 
   /**
