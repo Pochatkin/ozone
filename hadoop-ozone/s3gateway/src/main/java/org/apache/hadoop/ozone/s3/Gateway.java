@@ -28,7 +28,6 @@ import org.apache.hadoop.hdds.utils.HddsServerUtil;
 import org.apache.hadoop.ozone.OzoneSecurityUtil;
 import org.apache.hadoop.ozone.s3.metrics.S3GatewayMetrics;
 import org.apache.hadoop.ozone.s3secret.S3SecretHttpServer;
-import org.apache.hadoop.ozone.s3secret.S3ServerNotInitializedException;
 import org.apache.hadoop.ozone.util.OzoneNetUtils;
 import org.apache.hadoop.ozone.util.OzoneVersionInfo;
 
@@ -74,11 +73,8 @@ public class Gateway extends GenericCli {
     UserGroupInformation.setConfiguration(ozoneConfiguration);
     loginS3GUser(ozoneConfiguration);
     httpServer = new S3GatewayHttpServer(ozoneConfiguration, "s3gateway");
-    try {
-      s3SecretHttpServer = new S3SecretHttpServer(ozoneConfiguration, "s3secret");
-    } catch (S3ServerNotInitializedException e) {
-      LOG.warn("S3 secret server doesn't started, kerberos not enabled.");
-    }
+    s3SecretHttpServer = new S3SecretHttpServer(ozoneConfiguration,
+          "s3secret");
     metrics = S3GatewayMetrics.create();
     start();
 

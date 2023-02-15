@@ -217,6 +217,7 @@ public final class HttpServer2 implements FilterContainer {
     private String[] pathSpecs;
     private AccessControlList adminsAcl;
     private boolean securityEnabled = false;
+    private boolean globalAuthFilterEnabled = true;
     private String usernameConfKey;
     private String keytabConfKey;
     private boolean needsClientAuth;
@@ -337,6 +338,11 @@ public final class HttpServer2 implements FilterContainer {
 
     public Builder setSecurityEnabled(boolean enabled) {
       this.securityEnabled = enabled;
+      return this;
+    }
+
+    public Builder setGlobalFilterEnabled(boolean enabled) {
+      this.globalAuthFilterEnabled = enabled;
       return this;
     }
 
@@ -585,13 +591,14 @@ public final class HttpServer2 implements FilterContainer {
     this.findPort = b.findPort;
     this.portRanges = b.portRanges;
     initializeWebServer(b.name, b.hostName, b.conf, b.pathSpecs,
-        b.authFilterConfigurationPrefix, b.securityEnabled);
+        b.authFilterConfigurationPrefix, b.securityEnabled,
+        b.globalAuthFilterEnabled);
   }
 
   private void initializeWebServer(String name, String hostName,
       MutableConfigurationSource conf, String[] pathSpecs,
       String authFilterConfigPrefix,
-      boolean securityEnabled) throws IOException {
+      boolean securityEnabled, boolean globalAuth) throws IOException {
 
     Preconditions.checkNotNull(webAppContext);
 
@@ -634,8 +641,13 @@ public final class HttpServer2 implements FilterContainer {
           authFilterConfigPrefix);
       for (FilterInitializer c : initializers) {
         if ((c instanceof AuthenticationFilterInitializer) && securityEnabled) {
-          addFilter("authentication",
-              AuthenticationFilter.class.getName(), filterConfig);
+          if (globalAuth) {
+            addGlobalFilter("authentication",
+                AuthenticationFilter.class.getName(), filterConfig);
+          } else {
+            addFilter("authentication",
+                AuthenticationFilter.class.getName(), filterConfig);
+          }
         } else {
           c.initFilter(this, hadoopConf);
         }
