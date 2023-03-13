@@ -15,33 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.ozone.om;
 
-import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
+package org.apache.hadoop.ozone.om.s3;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.ozone.om.S3SecretStore;
+
+import java.io.IOException;
 
 /**
- * Cache layer of S3 secrets.
+ * S3 secret store provider.
  */
-public interface S3SecretCache {
+public interface S3SecretStoreProvider {
   /**
-   * Put secret value to cache.
-   * @param id secret value identifier.
-   * @param secretValue secret value.
-   * @param txId lifetime identifier.
+   * Create and return S3 secret store implementation
+   *    from provided configuration.
+   *
+   * @param conf Configuration instance.
+   * @return S3 secret store instance.
    */
-  void put(String id, S3SecretValue secretValue, long txId);
-
-  /**
-   * Invalidate secret value with provided secret identifier.
-   * @param id secret identifier.
-   * @param txId lifetime identifier.
-   */
-  void invalidate(String id, long txId);
-
-  /**
-   * Get value from cache.
-   * @param id cache secrect identifier.
-   * @return Secret value or {@code null} if value doesn't exist.
-   */
-  S3SecretValue get(String id);
+  S3SecretStore get(Configuration conf) throws IOException;
 }

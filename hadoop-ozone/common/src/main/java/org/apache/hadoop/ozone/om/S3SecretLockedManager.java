@@ -18,7 +18,7 @@
 package org.apache.hadoop.ozone.om;
 
 import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
-import org.apache.hadoop.ozone.om.lock.IOzoneManagerLock;
+import org.apache.hadoop.ozone.om.lock.OzoneManagerLock;
 
 import java.io.IOException;
 
@@ -29,10 +29,10 @@ import static org.apache.hadoop.ozone.om.lock.OzoneManagerLock.Resource.S3_SECRE
  */
 public class S3SecretLockedManager implements S3SecretManager {
   private final S3SecretManager secretManager;
-  private final IOzoneManagerLock lock;
+  private final OzoneManagerLock lock;
 
   public S3SecretLockedManager(S3SecretManager secretManager,
-                               IOzoneManagerLock lock) {
+                               OzoneManagerLock lock) {
     this.secretManager = secretManager;
     this.lock = lock;
   }

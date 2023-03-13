@@ -15,33 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.ozone.om;
+package org.apache.hadoop.ozone.s3.remote.vault.auth;
 
-import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
+import com.bettercloud.vault.Vault;
+import com.bettercloud.vault.VaultConfig;
+import com.bettercloud.vault.VaultException;
 
 /**
- * Cache layer of S3 secrets.
+ * S3 remote secret store authenticate interface.
  */
-public interface S3SecretCache {
+public interface Auth {
   /**
-   * Put secret value to cache.
-   * @param id secret value identifier.
-   * @param secretValue secret value.
-   * @param txId lifetime identifier.
+   * Authenticate and returns ready for use client.
+   *
+   * @param config Vault configuration.
+   * @return Vault authenticated REST client.
+   * @throws VaultException in case when authentication failed.
    */
-  void put(String id, S3SecretValue secretValue, long txId);
-
-  /**
-   * Invalidate secret value with provided secret identifier.
-   * @param id secret identifier.
-   * @param txId lifetime identifier.
-   */
-  void invalidate(String id, long txId);
-
-  /**
-   * Get value from cache.
-   * @param id cache secrect identifier.
-   * @return Secret value or {@code null} if value doesn't exist.
-   */
-  S3SecretValue get(String id);
+  Vault auth(VaultConfig config) throws VaultException;
 }

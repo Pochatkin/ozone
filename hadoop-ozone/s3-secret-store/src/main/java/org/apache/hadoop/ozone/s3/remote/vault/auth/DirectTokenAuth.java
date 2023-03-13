@@ -15,33 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.ozone.om;
 
-import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
+package org.apache.hadoop.ozone.s3.remote.vault.auth;
+
+import com.bettercloud.vault.Vault;
+import com.bettercloud.vault.VaultConfig;
+import com.bettercloud.vault.VaultException;
+
+import java.util.function.Supplier;
 
 /**
- * Cache layer of S3 secrets.
+ * Authentication via direct token providing from configuration.
  */
-public interface S3SecretCache {
-  /**
-   * Put secret value to cache.
-   * @param id secret value identifier.
-   * @param secretValue secret value.
-   * @param txId lifetime identifier.
-   */
-  void put(String id, S3SecretValue secretValue, long txId);
+public class DirectTokenAuth implements Auth {
+  private final Supplier<String> tokenProvider;
 
-  /**
-   * Invalidate secret value with provided secret identifier.
-   * @param id secret identifier.
-   * @param txId lifetime identifier.
-   */
-  void invalidate(String id, long txId);
+  public DirectTokenAuth(Supplier<String> tokenProvider) {
+    this.tokenProvider = tokenProvider;
+  }
 
-  /**
-   * Get value from cache.
-   * @param id cache secrect identifier.
-   * @return Secret value or {@code null} if value doesn't exist.
-   */
-  S3SecretValue get(String id);
+  @Override
+  public Vault auth(VaultConfig config) throws VaultException {
+    return new Vault(config.token(tokenProvider.get()).build());
+  }
 }

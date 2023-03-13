@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,33 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.ozone.om;
 
-import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
+package org.apache.hadoop.ozone.om.s3;
 
 /**
- * Cache layer of S3 secrets.
+ * This package contains S3 secret store related classes.
  */
-public interface S3SecretCache {
-  /**
-   * Put secret value to cache.
-   * @param id secret value identifier.
-   * @param secretValue secret value.
-   * @param txId lifetime identifier.
-   */
-  void put(String id, S3SecretValue secretValue, long txId);
-
-  /**
-   * Invalidate secret value with provided secret identifier.
-   * @param id secret identifier.
-   * @param txId lifetime identifier.
-   */
-  void invalidate(String id, long txId);
-
-  /**
-   * Get value from cache.
-   * @param id cache secrect identifier.
-   * @return Secret value or {@code null} if value doesn't exist.
-   */
-  S3SecretValue get(String id);
-}

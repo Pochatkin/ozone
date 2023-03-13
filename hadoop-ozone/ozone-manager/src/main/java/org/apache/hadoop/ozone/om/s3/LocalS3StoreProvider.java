@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,33 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.hadoop.ozone.om;
 
-import org.apache.hadoop.ozone.om.helpers.S3SecretValue;
+package org.apache.hadoop.ozone.om.s3;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.ozone.om.OmMetadataManagerImpl;
+import org.apache.hadoop.ozone.om.S3SecretStore;
+
+import java.io.IOException;
 
 /**
- * Cache layer of S3 secrets.
+ * Implementation of provider with local S3 secret store.
  */
-public interface S3SecretCache {
-  /**
-   * Put secret value to cache.
-   * @param id secret value identifier.
-   * @param secretValue secret value.
-   * @param txId lifetime identifier.
-   */
-  void put(String id, S3SecretValue secretValue, long txId);
+public class LocalS3StoreProvider implements S3SecretStoreProvider {
+  private final OmMetadataManagerImpl omMetadataManager;
 
-  /**
-   * Invalidate secret value with provided secret identifier.
-   * @param id secret identifier.
-   * @param txId lifetime identifier.
-   */
-  void invalidate(String id, long txId);
+  public LocalS3StoreProvider(OmMetadataManagerImpl omMetadataManager) {
+    this.omMetadataManager = omMetadataManager;
+  }
 
-  /**
-   * Get value from cache.
-   * @param id cache secrect identifier.
-   * @return Secret value or {@code null} if value doesn't exist.
-   */
-  S3SecretValue get(String id);
+  @Override
+  public S3SecretStore get(Configuration conf) throws IOException {
+    return omMetadataManager;
+  }
 }
