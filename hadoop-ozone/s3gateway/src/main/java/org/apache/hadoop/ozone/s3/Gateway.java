@@ -27,7 +27,6 @@ import org.apache.hadoop.hdds.tracing.TracingUtil;
 import org.apache.hadoop.hdds.utils.HddsServerUtil;
 import org.apache.hadoop.ozone.OzoneSecurityUtil;
 import org.apache.hadoop.ozone.s3.metrics.S3GatewayMetrics;
-import org.apache.hadoop.ozone.s3secret.S3SecretHttpServer;
 import org.apache.hadoop.ozone.util.OzoneNetUtils;
 import org.apache.hadoop.ozone.util.OzoneVersionInfo;
 
@@ -55,7 +54,6 @@ public class Gateway extends GenericCli {
   private static final Logger LOG = LoggerFactory.getLogger(Gateway.class);
 
   private S3GatewayHttpServer httpServer;
-  private S3SecretHttpServer s3SecretHttpServer;
   private S3GatewayMetrics metrics;
   private OzoneConfiguration ozoneConfiguration;
 
@@ -73,8 +71,6 @@ public class Gateway extends GenericCli {
     UserGroupInformation.setConfiguration(ozoneConfiguration);
     loginS3GUser(ozoneConfiguration);
     httpServer = new S3GatewayHttpServer(ozoneConfiguration, "s3gateway");
-    s3SecretHttpServer = new S3SecretHttpServer(ozoneConfiguration,
-          "s3secret");
     metrics = S3GatewayMetrics.create();
     start();
 
@@ -97,17 +93,11 @@ public class Gateway extends GenericCli {
     LOG.info("Starting Ozone S3 gateway");
     HddsServerUtil.initializeMetrics(ozoneConfiguration, "S3Gateway");
     httpServer.start();
-    if (s3SecretHttpServer != null) {
-      s3SecretHttpServer.start();
-    }
   }
 
   public void stop() throws Exception {
     LOG.info("Stopping Ozone S3 gateway");
     httpServer.stop();
-    if (s3SecretHttpServer != null) {
-      s3SecretHttpServer.stop();
-    }
     S3GatewayMetrics.unRegister();
   }
 

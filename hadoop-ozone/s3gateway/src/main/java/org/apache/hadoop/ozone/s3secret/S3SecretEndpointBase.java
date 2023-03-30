@@ -42,15 +42,10 @@ public class S3SecretEndpointBase implements Auditor {
   private ContainerRequestContext context;
 
   @Inject
-  private OzoneConfiguration ozoneConfiguration;
-
-  @Inject
   private OzoneClient client;
 
-  protected String shortNameFromRequest() throws IOException {
-    String principal = context.getSecurityContext()
-        .getUserPrincipal().getName();
-    return new HadoopKerberosName(principal).getShortName();
+  protected String shortNameFromRequest() {
+    return context.getSecurityContext().getUserPrincipal().getName();
   }
 
   private AuditMessage.Builder auditMessageBaseBuilder(AuditAction op,

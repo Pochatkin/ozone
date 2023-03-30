@@ -17,6 +17,7 @@
 
 package org.apache.hadoop.hdds.server.http;
 
+import java.util.Map;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -246,6 +247,16 @@ public abstract class BaseHttpServer {
     httpServer.addInternalServlet(servletName, pathSpec, clazz);
   }
 
+  /**
+   * Add a filter to BaseHttpServer
+   *
+   * @param name       The name of the filter
+   * @param classname  The filter class
+   * @param parameters The filter parameters
+   */
+  protected void addFilter(String name, String classname, Map<String, String> parameters) {
+    httpServer.addFilter(name, classname, parameters);
+  }
 
   /**
    * Returns the WebAppContext associated with this HttpServer.
