@@ -31,6 +31,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import org.apache.hadoop.hdds.cli.SubcommandWithParent;
+import org.apache.hadoop.hdds.client.ECReplicationConfig;
 import org.apache.hadoop.hdds.client.StandaloneReplicationConfig;
 import org.apache.hadoop.hdds.protocol.DatanodeDetails;
 import org.apache.hadoop.hdds.protocol.datanode.proto.ContainerProtos;
@@ -67,7 +68,7 @@ public class ChunkKeyHandler extends KeyHandler implements
     SubcommandWithParent {
 
   private ContainerOperationClient containerOperationClient;
-  private  XceiverClientManager xceiverClientManager;
+  private XceiverClientManager xceiverClientManager;
   private XceiverClientSpi xceiverClient;
   private OzoneManagerProtocol ozoneManagerClient;
 
@@ -116,11 +117,17 @@ public class ChunkKeyHandler extends KeyHandler implements
       ContainerChunkInfo containerChunkInfo = new ContainerChunkInfo();
       long containerId = keyLocation.getContainerID();
       chunkPaths.clear();
-      Pipeline pipeline = keyLocation.getPipeline();
-      if (pipeline.getType() != HddsProtos.ReplicationType.STAND_ALONE) {
-        pipeline = Pipeline.newBuilder(pipeline)
+      Pipeline keyPipeline = keyLocation.getPipeline();
+      boolean isECKey =
+          keyPipeline.getReplicationConfig().getReplicationType() ==
+              HddsProtos.ReplicationType.EC;
+      Pipeline pipeline;
+      if (keyPipeline.getType() != HddsProtos.ReplicationType.STAND_ALONE) {
+        pipeline = Pipeline.newBuilder(keyPipeline)
             .setReplicationConfig(StandaloneReplicationConfig.getInstance(ONE))
             .build();
+      } else {
+        pipeline = keyPipeline;
       }
       xceiverClient = xceiverClientManager
               .acquireClientForReadData(pipeline);
@@ -150,7 +157,7 @@ public class ChunkKeyHandler extends KeyHandler implements
         ContainerProtos.ContainerDataProto containerData =
                 containerOperationClient.readContainer(
                         keyLocation.getContainerID(),
-                        keyLocation.getPipeline());
+                        keyPipeline);
         for (ContainerProtos.ChunkInfo chunkInfo : tempchunks) {
           String fileName = containerLayoutVersion.getChunkFile(new File(
               getChunkLocationPath(containerData.getContainerPath())),
@@ -164,11 +171,17 @@ public class ChunkKeyHandler extends KeyHandler implements
         }
         containerChunkInfoVerbose
                 .setContainerPath(containerData.getContainerPath());
-        containerChunkInfoVerbose.setPipeline(keyLocation.getPipeline());
+        containerChunkInfoVerbose.setPipeline(keyPipeline);
         containerChunkInfoVerbose.setChunkInfos(chunkDetailsList);
         containerChunkInfo.setFiles(chunkPaths);
-        containerChunkInfo.setPipelineID(
-                keyLocation.getPipeline().getId().getId());
+        containerChunkInfo.setPipelineID(keyPipeline.getId().getId());
+        if (isECKey) {
+          ChunkType blockChunksType =
+              isECParityBlock(keyPipeline, entry.getKey()) ?
+                  ChunkType.PARITY : ChunkType.DATA;
+          containerChunkInfoVerbose.setChunkType(blockChunksType);
+          containerChunkInfo.setChunkType(blockChunksType);
+        }
         Gson gson = new GsonBuilder().create();
         if (isVerbose()) {
           element = gson.toJsonTree(containerChunkInfoVerbose);
@@ -189,6 +202,13 @@ public class ChunkKeyHandler extends KeyHandler implements
     Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
     String prettyJson = gson2.toJson(result);
     System.out.println(prettyJson);
+  }
+
+  private boolean isECParityBlock(Pipeline pipeline, DatanodeDetails dn) {
+    //index is 1-based,
+    //e.g. for RS-3-2 we will have data indexes 1,2,3 and parity indexes 4,5
+    return pipeline.getReplicaIndex(dn) >
+        ((ECReplicationConfig) pipeline.getReplicationConfig()).getData();
   }
 
   @Override
