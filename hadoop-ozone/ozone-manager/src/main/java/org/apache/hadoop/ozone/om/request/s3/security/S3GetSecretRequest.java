@@ -154,7 +154,7 @@ public class S3GetSecretRequest extends OMClientRequest {
             S3SecretValue s3SecretValue =
                 s3SecretManager.getSecret(accessId);
 
-            if (s3SecretValue == null) {
+            if (s3SecretValue == null || s3SecretValue.getAwsSecret() == null) {
               // Not found in S3SecretTable.
               if (createIfNotExist) {
                 // Add new entry in this case
